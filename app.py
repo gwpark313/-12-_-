@@ -92,10 +92,9 @@ menus = [
 def calculate_score(menu, user_spicy, user_price, preferred_categories):
     spicy_score = 5 - abs(menu["spicy"] - user_spicy)
     price_score = 5 - abs(menu["price"] - user_price)
-    category_bonus = 3 if menu["category"] in preferred_categories else 0
-    total = spicy_score + price_score + category_bonus
-    # 0~100 스케일로 변환 (최대 13점)
-    return round(total / 13 * 100)
+    total = spicy_score + price_score
+    # 0~100 스케일로 변환 (최대 10점)
+    return round(total / 10 * 100)
 
 # ─── 앱 시작 ───
 st.title("🍽️ 오늘 뭐 먹지?")
@@ -151,6 +150,10 @@ if st.button("🎯 추천 받기", type="primary", use_container_width=True):
 
     # 필터링
     filtered = menus.copy()
+
+    # 0) 선호 카테고리 필터링 (선택한 카테고리의 메뉴만 추천)
+    if selected_categories:
+        filtered = [m for m in filtered if m["category"] in selected_categories]
 
     # 1) 알레르기 필터링
     if selected_allergies:
